@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #__next {
+  height: 100%;
+}
+
+/* Avoid using @apply for global body utilities (Turbopack/PostCSS issues).
+   Use explicit colors to ensure PostCSS/Tailwind compatibility. */
+body {
+  background-color: #f9fafb; /* Tailwind gray-50 */
+  color: #111827; /* Tailwind gray-900 */
+}

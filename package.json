@@ -1,0 +1,31 @@
+{
+  "name": "trolley-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "bcryptjs": "^3.0.3",
+    "framer-motion": "^12.23.24",
+    "google-auth-library": "^10.5.0",
+    "google-client-api": "^1.0.4",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^9.0.0",
+    "next": "^16.0.3",
+    "razorpay": "^2.9.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-icons": "^5.5.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18"
+  }
+}
