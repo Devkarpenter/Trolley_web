@@ -1,6 +1,7 @@
 "use client";
 
 export const dynamic = "force-dynamic";   // 🔥 Prevent Vercel prerender error
+export const fetchCache = "force-no-store";   // 🔥 Disable caching completely
 
 import { useSearchParams } from "next/navigation";
 
