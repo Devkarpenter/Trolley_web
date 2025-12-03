@@ -7,7 +7,7 @@ export const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  // Load user from localStorage on mount (null while loading)
+  // Load saved user
   useEffect(() => {
     try {
       const saved = localStorage.getItem("user");
@@ -17,23 +17,20 @@ export function AuthProvider({ children }) {
         setUser(null);
       }
     } catch (e) {
-      console.error("Error parsing saved user:", e);
+      console.error("Error loading user:", e);
       setUser(null);
     }
   }, []);
 
-  // Save logged-in user + token
+  // Save login user
   const login = (userObj, token) => {
-    // Accept either { id: "..."} or { _id: "..." }
-    const id = userObj._id || userObj.id || userObj._id;
+    const id = userObj._id || userObj.id;
     const cleanUser = {
       _id: id,
       name: userObj.name,
       email: userObj.email,
       role: userObj.role || "user",
     };
-
-    console.log("🔥 SAVING USER:", cleanUser);
 
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(cleanUser));
@@ -51,31 +48,29 @@ export function AuthProvider({ children }) {
 
       const data = await res.json();
 
-      // If server responded ok, it should contain data.user with role
-      if (res.ok && data && data.user) {
+      if (res.ok && data.user) {
         login(data.user, data.token);
         return { success: true };
       }
 
       return { success: false, message: data?.error || "Login failed" };
     } catch (err) {
-      console.error("signIn error:", err);
       return { success: false, message: err.message };
     }
   };
 
-  // Google login (assumes your /api/auth/google returns { user, token })
-  const googleLogin = async (tokenId) => {
+  // ⭐ GOOGLE LOGIN FIXED HERE ⭐
+  const googleLogin = async (credential) => {
     try {
       const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: tokenId }),
+        body: JSON.stringify({ credential }), // ✅ FIXED
       });
 
       const data = await res.json();
 
-      if (res.ok && data && data.user) {
+      if (res.ok && data.user) {
         login(data.user, data.token);
         return { success: true };
       }

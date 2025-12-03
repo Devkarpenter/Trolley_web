@@ -18,7 +18,6 @@ export default function SignIn() {
   // ⭐ NORMAL LOGIN
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const result = await signIn(email, password);
 
     if (!result.success) {
@@ -29,8 +28,15 @@ export default function SignIn() {
     router.push("/dashboard");
   };
 
-  // ⭐ GOOGLE LOGIN
+  // ⭐ GOOGLE LOGIN CALLBACK (FIXED HERE)
   const handleGoogleResponse = async (res) => {
+    console.log("GOOGLE RESPONSE:", res); // 🔥 VERY IMPORTANT
+
+    if (!res || !res.credential) {
+      setError("Google login failed (no credential)");
+      return;
+    }
+
     const result = await googleLogin(res.credential);
 
     if (!result.success) {
@@ -41,7 +47,7 @@ export default function SignIn() {
     router.push("/dashboard");
   };
 
-  // Google Button Load
+  // GOOGLE BUTTON (WIDTH FIXED)
   useEffect(() => {
     if (window.google) {
       google.accounts.id.initialize({
@@ -51,7 +57,11 @@ export default function SignIn() {
 
       google.accounts.id.renderButton(
         document.getElementById("googleSignInDiv"),
-        { theme: "outline", size: "large", width: "100%" }
+        {
+          theme: "outline",
+          size: "large",
+          width: 350, // 🔥 FIXED — must be NUMBER (not "100%")
+        }
       );
     }
   }, []);
@@ -63,9 +73,15 @@ export default function SignIn() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md bg-white/80 p-10 rounded-2xl shadow-xl"
       >
-        <h1 className="text-4xl font-extrabold text-center mb-8">Welcome Back</h1>
+        <h1 className="text-4xl font-extrabold text-center mb-8">
+          Welcome Back
+        </h1>
 
-        {error && <div className="bg-red-100 text-red-700 p-3 mb-4 rounded-lg">{error}</div>}
+        {error && (
+          <div className="bg-red-100 text-red-700 p-3 mb-4 rounded-lg">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="relative">
