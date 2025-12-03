@@ -8,6 +8,8 @@ import { FiStar } from "react-icons/fi"
 export default function ProductCard({ product }) {
   const { addToCart } = useContext(CartContext)
 
+  const productId = product?._id || product?.id; // ⭐ FIXED ID HANDLING
+
   return (
     <motion.div
       whileHover={{ scale: 1.03 }}
@@ -57,8 +59,9 @@ export default function ProductCard({ product }) {
           Add to Cart
         </button>
 
+        {/* ⭐ FIXED VIEW BUTTON */}
         <Link
-          href={`/products/${product.id}`}
+          href={`/products/${product._id}`}
           className="flex-1 border border-gray-300 text-gray-700 py-2 rounded-xl text-center font-medium hover:border-gray-500 hover:text-gray-900 transition-all hover:scale-[1.03]"
         >
           View

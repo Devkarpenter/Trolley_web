@@ -5,6 +5,10 @@ export default async function Products() {
     cache: "no-store",
   });
 
+  if (!res.ok) {
+    return <p className="p-6 text-lg">Failed to load products</p>;
+  }
+
   const products = await res.json();
 
   return (

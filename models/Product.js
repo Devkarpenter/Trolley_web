@@ -1,15 +1,11 @@
 import mongoose from "mongoose";
 
 const ProductSchema = new mongoose.Schema({
-  title: String,
+  name: { type: String, required: true },    // ✔ correct field
   description: String,
   price: Number,
-  oldPrice: Number,
-  category: String,
-  brand: String,
-  image: String,
-  inStock: Boolean,
-  rating: Number
+  emoji: String                             // ✔ you used emoji in DB
 });
 
-export default mongoose.models.Product || mongoose.model("Product", ProductSchema);
+export default mongoose.models.Product ||
+  mongoose.model("Product", ProductSchema);
