@@ -5,9 +5,17 @@ import Product from "@/models/Product";
 import { verifyToken, requireAdmin } from "@/utils/auth";
 
 export async function GET() {
-  await connectDB();
-  const products = await Product.find().lean();
-  return NextResponse.json({ ok: true, products });
+  try {
+    await connectDB();
+    const products = await Product.find({});
+    return NextResponse.json(products);
+  } catch (err) {
+    console.error("PRODUCT API ERROR:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch products" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req) {
