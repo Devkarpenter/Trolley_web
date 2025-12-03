@@ -1,26 +1,34 @@
-// models/Order.js
 import mongoose from "mongoose";
 
-const OrderItemSchema = new mongoose.Schema({
-  productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-  name: String,
-  price: Number,
-  quantity: Number,
-  image: String
-});
+const OrderItemSchema = new mongoose.Schema(
+  {
+    id: String,
+    name: String,
+    price: Number,
+    quantity: Number,
+  },
+  { _id: false }
+);
 
-const OrderSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  items: [OrderItemSchema],
-  amount: Number,
-  currency: { type: String, default: "INR" },
-  status: { type: String, default: "created" }, // created, paid, cancelled
-  razorpayOrderId: String,
-  razorpayPaymentId: String,
-  razorpaySignature: String,
-  address: Object,
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
+const OrderSchema = new mongoose.Schema(
+  {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    items: [OrderItemSchema],
+    amount: Number,
+    paymentMethod: { type: String, enum: ["COD", "UPI", "CARD"], default: "COD" },
+    status: { type: String, default: "PROCESSING" },
+    address: {
+      fullName: String,
+      phone: String,
+      pincode: String,
+      line1: String,
+      line2: String,
+      city: String,
+      state: String,
+      landmark: String,
+    },
+  },
+  { timestamps: true }
+);
 
 export default mongoose.models.Order || mongoose.model("Order", OrderSchema);
