@@ -1,7 +1,7 @@
 // app/api/products/route.js
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
-import Product from "@/models/Product";
+import Product from "models/Product.js";
 import { verifyToken, requireAdmin } from "@/utils/auth";
 
 export async function GET() {
