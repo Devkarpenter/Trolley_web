@@ -11,7 +11,7 @@ export default function Dashboard() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Animation Variants
+  // ===== ANIMATION VARIANTS =====
   const container = {
     hidden: { opacity: 0 },
     visible: {
@@ -23,35 +23,44 @@ export default function Dashboard() {
   const cardVariant = {
     hidden: { opacity: 0, y: 30 },
     visible: {
-      opacity: 1,
-      y: 0,
+      opacity: 1, y: 0,
       transition: { type: "spring", stiffness: 120 },
     },
   };
 
+  // ===== FIXED EFFECT =====
   useEffect(() => {
+    // ⚠️ FIX: Wait until user is loaded
     if (user === null) return;
 
+    // If not logged in → redirect
     if (!user) {
       router.push("/sign-in");
       return;
     }
 
+    // If admin → redirect to admin panel
     if (user.role === "admin") {
       router.push("/admin");
       return;
     }
 
+    // Normal user → Load orders
     const loadOrders = async () => {
-      const res = await fetch("/api/orders");
-      const data = await res.json();
-      setOrders(data.orders || []);
-      setLoading(false);
+      try {
+        const res = await fetch("/api/orders");
+        const data = await res.json();
+        setOrders(data.orders || []);
+      } catch (err) {
+        console.error("Order fetch error:", err);
+      }
+      setLoading(false); // ❗ FIX ensure loading stops
     };
 
     loadOrders();
   }, [user]);
 
+  // ===== FIX: ONLY SHOW LOADING WHEN user === null OR orders loading =====
   if (user === null || loading) {
     return (
       <div className="flex justify-center mt-24">
@@ -64,6 +73,7 @@ export default function Dashboard() {
     );
   }
 
+  // ===== MAIN UI =====
   return (
     <motion.div
       initial="hidden"
@@ -71,18 +81,15 @@ export default function Dashboard() {
       variants={container}
       className="p-6 max-w-4xl mx-auto"
     >
-      {/* Welcome Heading */}
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="text-4xl font-extrabold mb-6"
       >
-        Welcome,{" "}
-        <span className="text-blue-600">{user.name}</span> 👋
+        Welcome, <span className="text-blue-600">{user.name}</span> 👋
       </motion.h1>
 
-      {/* Orders Title */}
       <motion.h2
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -92,7 +99,6 @@ export default function Dashboard() {
         Your Orders
       </motion.h2>
 
-      {/* No Orders */}
       {orders.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
@@ -112,26 +118,21 @@ export default function Dashboard() {
                 whileHover={{ scale: 1.02 }}
                 className="bg-white border rounded-xl shadow p-6"
               >
-                {/* Order ID */}
                 <p className="font-semibold text-lg">
                   Order ID:{" "}
                   <span className="text-blue-600">{order._id}</span>
                 </p>
 
-                {/* Status Tag */}
                 <div className="mt-2">
                   <span className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-full">
                     {order.status}
                   </span>
                 </div>
 
-                {/* Amount */}
                 <p className="mt-3 text-gray-700 font-medium">
-                  Amount:{" "}
-                  <span className="font-semibold">₹{order.amount}</span>
+                  Amount: <span className="font-semibold">₹{order.amount}</span>
                 </p>
 
-                {/* Items */}
                 <div className="mt-4">
                   <p className="font-semibold mb-2">Items:</p>
                   <ul className="space-y-2">
@@ -150,7 +151,6 @@ export default function Dashboard() {
                   </ul>
                 </div>
 
-                {/* Date */}
                 <p className="text-sm text-gray-500 mt-3">
                   Ordered on:{" "}
                   {new Date(order.createdAt).toLocaleString()}
