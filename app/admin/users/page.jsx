@@ -1,49 +1,55 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../context/auth-context";
-import { useRouter } from "next/navigation";
 
-export default function AdminUsers() {
-  const { user } = useAuth();
-  const router = useRouter();
+export default function AdminUsersPage() {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
-    if (user.role !== "admin") router.push("/");
+    async function loadUsers() {
+      try {
+        const res = await fetch("/api/admin/users");
+        const data = await res.json();
+        setUsers(data.users || []);
+      } catch (e) {
+        console.error("USER LOAD ERROR:", e);
+      }
+      setLoading(false);
+    }
+    loadUsers();
+  }, []);
 
-    fetchUsers();
-  }, [user]);
-
-  const fetchUsers = async () => {
-    const token = localStorage.getItem("token");
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/users`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const data = await res.json();
-    setUsers(data.users || []);
-  };
+  if (loading)
+    return <p className="p-10 text-center text-lg">Loading users...</p>;
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">All Users</h1>
 
-      <div className="space-y-4">
-        {users.map((u) => (
-          <div
-            key={u._id}
-            className="bg-white p-4 shadow border rounded-xl"
-          >
-            <p><strong>Name:</strong> {u.name}</p>
-            <p><strong>Email:</strong> {u.email}</p>
-            <p><strong>Role:</strong> {u.role}</p>
-            <p><strong>Joined:</strong> {new Date(u.createdAt).toLocaleDateString()}</p>
-          </div>
-        ))}
-      </div>
+      {users.length === 0 ? (
+        <p>No users found.</p>
+      ) : (
+        <table className="w-full border">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="p-2 border">Name</th>
+              <th className="p-2 border">Email</th>
+              <th className="p-2 border">Role</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {users.map((u) => (
+              <tr key={u._id} className="text-center">
+                <td className="p-2 border">{u.name}</td>
+                <td className="p-2 border">{u.email}</td>
+                <td className="p-2 border capitalize">{u.role}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
